@@ -1,0 +1,35 @@
+SET SERVEROUTPUT ON;
+SET VERIFY OFF;
+SET LINESIZE 200;
+
+ACCEPT X NUMBER PROMPT "ENTER QUANTITY TO RESTOCK ALL PRODUCTS = "
+ACCEPT Y NUMBER PROMPT "ENTER ID OF A SINGLE PRODUCT = "
+ACCEPT Z NUMBER PROMPT "ENTER QUANTITY TO RESTOCK SINGLE PRODUCT = "
+ACCEPT U NUMBER PROMPT "ENTER ORDER ID TO UPDATE SHIPMENT = "
+ACCEPT D NUMBER PROMPT "ENTER ORDER ID TO REMOVE = "
+DECLARE
+	totalProd NUMBER;
+	restcokAllAmount INTEGER;
+	UPD INTEGER;
+	PID INTEGER;
+	restockSingleAmount INTEGER;
+	OID INTEGER;
+	DOID INTEGER;
+BEGIN
+	totalProd := shopTask.understockedProducts;
+	DBMS_OUTPUT.PUT_LINE('Total Understocked Product : ' || totalProd);
+	restcokAllAmount:=&X;
+	shopTask.restockProducts(restcokAllAmount, UPD);
+	DBMS_OUTPUT.PUT_LINE('NUMBER OF RESTOCKED PRODUCTS : ' || UPD);
+	PID:=&Y;
+	restockSingleAmount:=&Z;
+	shopTask.restockIndividualProduct(PID, restockSingleAmount);
+	OID:=&U;
+	shopTask.updateShipmentStatus(OID);
+	DOID:=&D;
+	shopTask.delOrder(DOID);
+EXCEPTION
+	WHEN NO_DATA_FOUND THEN
+		DBMS_OUTPUT.PUT_LINE('NO SUCH ENTRY FOUND');
+END;
+/
